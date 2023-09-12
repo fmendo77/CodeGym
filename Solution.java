@@ -7,8 +7,8 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 public class Solution {
-    //public static final String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,\":-!? ";
-    public static final String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,\":-!? ";
+    //public static final String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     public static final String consonant = "BCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz";
     public static final String vocal = "AEIOUaeiou";
 
@@ -148,7 +148,6 @@ public class Solution {
     }
 
     public static void option_3() {
-        String dataFile = "archivo.txt";
         String inFile = "salida.cipher";
         String outFile = "salida.clear";
 
@@ -165,6 +164,53 @@ public class Solution {
             BufferedReader reader = new BufferedReader(in);
             FileWriter writer = new FileWriter(pathOut.toFile(), true);
             BufferedWriter bw = new BufferedWriter(writer)) {
+            System.out.print("\nDesencriptando...");
+
+            String line = null;
+            while (reader.ready()) {
+                line = reader.readLine();
+
+              for (int key = 0; key < alphabet.length(); key++) {
+                chars = scrollInverse(chars, key);
+                String word = encrypt(chars, line);
+                if (wordRules(word)) {
+                    bw.write(key + "] " + word);
+                    bw.newLine();
+                }
+              }
+            }
+            System.out.print(" desencriptado realizado");
+        } catch (FileNotFoundException e) {
+            System.out.print("*** Ruta incorrecta!");
+        } catch (Exception e) {
+            System.out.println("Algo salió mal : " + e);
+        }
+        String enter = console.nextLine();
+        System.out.println("\n\n\n");
+    }
+
+    public static void option_4() {
+        String dataFile = "texto.txt";
+        String inFile = "encriptado.cipher";
+        String outFile = "desencriptado.clear";
+
+        //var chars = new HashMap<Character, Character>();
+        var statistic = new HashMap<Character, Integer>();
+        Scanner console = new Scanner(System.in);
+        System.out.println("\n\n\n4.- Descifrado por análisis estadístico.");
+        System.out.print("Captura la ruta de archivo encriptado: ");
+        Path pathIn = Path.of(console.nextLine(), inFile);
+
+        System.out.print("Captura la ruta del archivo clear: ");
+        Path pathOut = Path.of(console.nextLine(), outFile);
+
+        Path pathInEst = Path.of(console.nextLine(), dataFile);
+        genStatistic(pathInEst, statistic);
+
+        try (FileReader in = new FileReader(pathIn.toFile());
+             BufferedReader reader = new BufferedReader(in);
+             FileWriter writer = new FileWriter(pathOut.toFile(), true);
+             BufferedWriter bw = new BufferedWriter(writer)) {
             System.out.println("\nDesencriptando...");
 
             String line = null;
@@ -188,7 +234,6 @@ public class Solution {
         String enter = console.nextLine();
         System.out.println("\n\n\n");
     }
-
 
 
     public static String encrypt(HashMap<Character, Character> chars, String word) {
@@ -243,7 +288,7 @@ public class Solution {
                 countConsonants=0;
                 countVocals=0;
                 countSpace++;
-                if (countPointSpace >0) {
+                if (countPointSpace > 0) {
                     countPointSpace++;
                 }
             } else if (".".contains(c)) {
@@ -252,26 +297,35 @@ public class Solution {
                 countSpace=0;
                 countPointSpace++;
             }
-            if (countConsonants > 3 || countVocals > 3 || countSpace > 1 || countPointSpace>1) {
+            if (countConsonants > 3 || countVocals > 3 || countSpace > 1 || countPointSpace > 2) {
                 result = false;
             }
             i++;
         }
+
         return result;
     }
+    public static HashMap genStatistic(Path pathInEst, HashMap statistic) throws FileNotFoundException, IOException {
 
-}
-
-/*
-        Map<Character, Character> sortedmap = new TreeMap<Character, Character>(chars);
-        System.out.println("\n-> TreeMap ordenado por key:");
-        for (Map.Entry<Character, Character> e : sortedmap.entrySet()) {
-            System.out.println("-> key: " + e.getKey() + " - value: " + e.getValue());
+        FileReader in = new FileReader(pathInEst.toFile());
+        BufferedReader reader = new BufferedReader(in);
+        for (int i = 0; i < alphabet.length(); i++) {
+            statistic.put(alphabet.charAt(i), 0);
         }
- */
-/*        String word = "";
-        word = console.nextLine();
-        while (word.equals("")) {
-            System.out.print("Captura la clave a encriptar: ");
-            word = console.nextLine();
-        }*/
+        while (reader.ready()) {
+               String line = reader.readLine();
+            int value = statistic.get(c);
+
+            }
+        return statistic;
+    }
+    public static int counter(String string, char c) {
+        int i, count = 0;
+        i = string.indexOf(c);
+        while (i != -1) {
+            count++;
+            i = string.indexOf(c, i + 1);
+        }
+        return count;
+    }
+}
